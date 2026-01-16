@@ -1,26 +1,38 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Task
 from .form import TaskForm
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 
 def index(request):
     return render(request, 'my_app/index.html')
 
+@login_required
 def task_list(request):
-    all_tasks = Task.objects.all()
-    return render(request, 'my_app/task_list.html',{'tasks': all_tasks})
+    search_input = request.GET.get('search-area') or ''
+
+    task = Task.objects.filter(user=request.user)
+
+    if search_input:
+        tasks = tasks.filter(title__icontains=search_input)
+
+    return render(request, 'my_app/task_list.html',{'tasks': tasks, 'search_input': search_input})
 
 def task_detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     return render(request, 'my_app/task_detail.html', {'task': task})
 
+@login_required
 def create_task(request):
     if request.method == "POST":
         form = TaskForm(request.POST)
         if form.is_valid():
-            form.save() # This saves the new task to the database!
-            return redirect('task_list') # Send user back to the list
+            new_task = form.save(commit=False)
+            new_task.user = request.user
+            new_task.save()
+            return redirect('task_list') 
     else:
         form = TaskForm()
     
