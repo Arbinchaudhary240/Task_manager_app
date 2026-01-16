@@ -1,0 +1,17 @@
+{% extends 'my_app/base.html' %}
+
+{% block content %}
+    <h1>Task Detail</h1>
+    <div style="border: 1px solid #ccc; padding: 20px;">
+        <h2>{{ task.title }}</h2>
+        <p>{{ task.description }}</p>
+        <p><strong>Status:</strong> 
+            {% if task.is_completed %} Completed ✅ {% else %} Pending ⏳ {% endif %}
+        </p>
+        <p><small>Created on: {{ task.created_at }}</small></p>
+    </div>
+    <br>
+    <a href="{% url 'task_update' task.id %}">Edit this task</a>
+    <br>
+    <a href="{% url 'task_list' %}">← Back to List</a>
+{% endblock %}

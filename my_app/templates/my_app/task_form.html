@@ -1,0 +1,14 @@
+{% extends 'my_app/base.html' %}
+
+{% block content %}
+    <h1 class="mb-4">{% if task %}Edit Task{% else %}New Task{% endif %}</h1>
+    
+    <form method="POST" class="shadow-sm p-3 border rounded">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="{% url 'task_list' %}" class="btn btn-link text-secondary">Cancel</a>
+    </form>
+{% endblock %}

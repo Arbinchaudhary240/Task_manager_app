@@ -1,0 +1,12 @@
+{% extends 'my_app/base.html' %} 
+
+{% block content %}
+    <h1>Are you sure</h1>
+    <p>Are you sure you want to detele this task: <strong>"{{ task.title }}"</strong></p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" style="background-color: red; color: white;">Yes, Delete</button>
+        <a href="{% url 'task_list' %}">Cancel</a>
+    </form>
+{% endblock %}
