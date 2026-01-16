@@ -2,18 +2,31 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Task
 from .form import TaskForm
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 # Create your views here.
 
 def index(request):
     return render(request, 'my_app/index.html')
 
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect(task_list)
+        
+    else:
+        form = UserCreationForm()
+    return render(request, 'my_app/register.html', {'form': form})
+
 @login_required
 def task_list(request):
     search_input = request.GET.get('search-area') or ''
 
-    task = Task.objects.filter(user=request.user)
+    tasks = Task.objects.filter(user=request.user)
 
     if search_input:
         tasks = tasks.filter(title__icontains=search_input)
