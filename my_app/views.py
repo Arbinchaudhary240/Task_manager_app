@@ -24,13 +24,20 @@ def register(request):
 
 @login_required
 def task_list(request):
-    search_input = request.GET.get('search-area') or ''
-
     tasks = Task.objects.filter(user=request.user)
+
+    search_input = request.GET.get('search-area') or ''
 
     if search_input:
         tasks = tasks.filter(title__icontains=search_input)
 
+    incomplete_count = tasks.filter(is_completed=False).count()
+
+    context = {
+        'tasks': tasks,
+        'count': incomplete_count,
+        'search_input': search_input,
+    }
     return render(request, 'my_app/task_list.html',{'tasks': tasks, 'search_input': search_input})
 
 def task_detail(request, task_id):
@@ -51,6 +58,7 @@ def create_task(request):
     
     return render(request, 'my_app/task_form.html', {'form': form})
 
+@login_required
 def task_update(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
 
