@@ -1,9 +1,16 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from .models import Task
 from .form import TaskForm
-from django.contrib.auth.decorators import login_required
+from django.views.generic.list import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.views.generic.detail import DetailView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+
 
 # Create your views here.
 
@@ -11,72 +18,70 @@ def index(request):
     return render(request, 'my_app/index.html')
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('task_list') # Don't let the logged in user register again.
+    
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect(task_list)
+            return redirect('task_list')
         
     else:
         form = UserCreationForm()
     return render(request, 'my_app/register.html', {'form': form})
 
-@login_required
-def task_list(request):
-    tasks = Task.objects.filter(user=request.user)
+class TaskList(LoginRequiredMixin, ListView):
+    model = Task
+    context_object_name = 'tasks'
+    template_name = 'my_app/task_list.html'
 
-    search_input = request.GET.get('search-area') or ''
-
-    if search_input:
-        tasks = tasks.filter(title__icontains=search_input)
-
-    incomplete_count = tasks.filter(is_completed=False).count()
-
-    context = {
-        'tasks': tasks,
-        'count': incomplete_count,
-        'search_input': search_input,
-    }
-    return render(request, 'my_app/task_list.html',{'tasks': tasks, 'search_input': search_input})
-
-def task_detail(request, task_id):
-    task = get_object_or_404(Task, pk=task_id)
-    return render(request, 'my_app/task_detail.html', {'task': task})
-
-@login_required
-def create_task(request):
-    if request.method == "POST":
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            new_task = form.save(commit=False)
-            new_task.user = request.user
-            new_task.save()
-            return redirect('task_list') 
-    else:
-        form = TaskForm()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # 1. Filter tasks by the current user
+        user_tasks = context['tasks'].filter(user=self.request.user)
+        
+        # 2. Get the search input
+        search_input = self.request.GET.get('search-area') or ''
+        if search_input:
+            user_tasks = user_tasks.filter(title__icontains=search_input)
+        
+        # 3. Update the context with the filtered tasks and the count
+        context['tasks'] = user_tasks
+        context['count'] = user_tasks.filter(is_completed=False).count() # Use user_tasks, not context['count']
+        context['search_input'] = search_input
     
-    return render(request, 'my_app/task_form.html', {'form': form})
+        return context
 
-@login_required
-def task_update(request, task_id):
-    task = get_object_or_404(Task, pk=task_id)
-
-    if request.method == "POST":
-        form = TaskForm(request.POST, instance=task)
-        if form.is_valid():
-            form.save() # This saves the new task to the database!
-            return redirect('task_detail', task_id=task.id) # Send user back to the list
-    else:
-        form = TaskForm(instance=task)
+class TaskDetail(LoginRequiredMixin, DetailView):
+    model = Task
+    context_object_name = 'task'
+    template_name = 'my_app/task_detail.html'
     
-    return render(request, 'my_app/task_form.html', {'form': form, 'task': task})
+class TaskCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Task
+    fields = ['title', 'description', 'is_completed']
+    success_url = reverse_lazy('task_list')
+    success_message = "Task was created sucessfully!"
 
-def task_delete(request, task_id):
-    task = get_object_or_404(Task, pk=task_id)
-
-    if request.method == "POST":
-        task.delete()
-        return redirect('task_list')
+    def form_valid(self, form):
+        form.instance.user = self.request.user 
+        return super().form_valid(form)
     
-    return render(request, 'my_app/task_confirm_delete.html', {'task': task})
+class TaskUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Task
+    fields = ['title', 'description', 'is_completed']
+    success_url = reverse_lazy('task_list')
+    success_message = "Task was updated succesfully "
+    
+class TaskDelete(LoginRequiredMixin, DeleteView):
+    model = Task
+    context_object_name= 'tasks'
+    success_url = reverse_lazy('task_list')
+    template_name = 'my_app/task_confirm_delete.html'
+
+    def get_success_url(self):
+        messages.success(self.request, "Task deleted successfully.")
+        return reverse_lazy('task_list')

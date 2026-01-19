@@ -3,10 +3,10 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('tasks/', views.task_list, name='task_list'),
-    path('task/new/', views.create_task, name='create_task'),
-    path('tasks/<int:task_id>/', views.task_detail, name='task_detail'),
-    path('tasks/<int:task_id>/edit/', views.task_update, name='task_update'),
-    path('tasks/<int:task_id>delete/', views.task_delete, name='task_delete'),
+    path('tasks/', views.TaskList.as_view(), name='task_list'),
+    path('task-create/', views.TaskCreate.as_view(), name='create_task'),
+    path('tasks/<int:pk>/', views.TaskDetail.as_view(), name='task_detail'),
+    path('tasks-update/<int:pk>/', views.TaskUpdate.as_view(), name='task_update'),
+    path('tasks-delete/<int:pk>', views.TaskDelete.as_view(), name='task_delete'),
     path('register/', views.register, name='register'),
 ]

@@ -28,6 +28,15 @@
         </div>
     </nav>
 
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li style="color: white; background: red; padding: 20px; font-weight: bold;">
+            DEBUG MESSAGE: {{ message }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <div class="container bg-white p-4 shadow-sm rounded">
         {% block content %}
         {% endblock %}

@@ -38,11 +38,13 @@
                 <div class="d-flex align-items-center">
                     {% if task.is_completed %}
                         <span class="text-decoration-line-through text-muted">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i> {{ task.title }}
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <a href="{% url 'task_detail' task.id %}">{{ task.title }}</a>
                         </span>
                     {% else %}
                         <span class="fw-bold">
-                            <i class="bi bi-circle me-2 text-secondary"></i> {{ task.title }}
+                            <i class="bi bi-circle me-2 text-secondary"></i> 
+                            <a href="{% url 'task_detail' task.id %}">{{ task.title }}<a/>
                         </span>
                     {% endif %}
                 </div>

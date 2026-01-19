@@ -1,48 +1,32 @@
 # Django Task Manager
-A professional, multi-user Task Management system built as a foundation for my **Google Summer of Code** journey. This project demonstrates core web development principles: CRUD logic, User Authentication, and Responsive Design.
+A professional-grade Task Manager built with Django, focusing on Object-Oriented Programming (OOP) and secure Class-Based Views.
 
-## 🌟 Key Features
+## 🚀 Features
+- **User Authentication:** Secure registration, login, and logout.
+- **Task CRUD:** Create, View, Update, and Delete tasks.
+- **Search Functionality:** Real-time task filtering.
+- **Security:** Logic-level isolation (Users can only see their own tasks).
+- **Class-Based Views:** Built using Django's generic views for scalability.
 
-* **User Accounts:** Secure Login/Signup system using Django's built-in Auth.
-* **Private Dashboards:** Each user has their own personal task list (User-Task ownership).
-* **Full CRUD:** Create, Read, Update, and Delete functionality for task management.
-* **Real-time Search:** Filter tasks instantly using the integrated search bar.
-* **Responsive UI:** Styled with **Bootstrap 5** for seamless use on mobile and desktop.
-
-## 🛠️ Tech Stack
-
-* **Backend:** [Django 5.x](https://www.djangoproject.com/) (Python)
-* **Frontend:** HTML5, Bootstrap 5
-* **Database:** SQLite3 (Local development)
-* **Version Control:** Git & GitHub
-
+## 🛠️ Technical Stack
+- **Backend:** Django 6.0.1
+- **Database:** SQLite (Development)
+- **Architecture:** Class-Based Views (CBVs) with Mixins for security.
+- **Testing:** Automated unit tests for core logic.
 ## ⚙️ Installation & Setup
 
-To run this project locally, follow these steps:
-
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/Arbinchaudhary240/gsoc-task-manager.git](https://github.com/Arbinchaudhary240/gsoc-task-manager.git)
-   cd gsoc-task-manager
-
-2. **Create a Virtual Environment:**
-   ```bash
-   python -m venv .venv
-   # Actvate on windows:
-   .\.venv\Scripts\activate
-
-3. **Install Dependencies:**
-   ```bash
-   pip install -r requirement.txt
-
-4. **Initialize Database:**
-    ```bash
-    python manage.py migrate
-
-5. **Start the Development server:**
-    python manage.py runserver
-
+## 🚦 Getting Started
+1. Clone the repo: `git clone <your-repo-link>`
+2. Create venv: `python -m venv .venv`
+3. Install Django: `pip install django`
+4. Run Migrations: `python manage.py migrate`
+5. Start Server: `python manage.py runserver`
 6. open http://127.0.0.1:8000/ in your browser.
+
+## 🧪 Testing
+Run the automated test suite:
+```bash
+python manage.py test
 
 # 📂 Project Structure:
 - core/: Project configuration and settings.
