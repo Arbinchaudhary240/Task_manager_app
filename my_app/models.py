@@ -9,5 +9,16 @@ class Task(models.Model):
     is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    PRIORITY_CHOICES = [
+        ('L', 'Low'),
+        ('M', 'Mediam'),
+        ('H', 'High')
+    ]
+    priority = models.CharField(
+        max_length= 1,
+        choices = PRIORITY_CHOICES,
+        default='M'
+    )
+
     def __str__(self):
         return self.title

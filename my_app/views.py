@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 from django.views.generic.detail import DetailView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-
+from django.views import View
 
 # Create your views here.
 
@@ -62,7 +62,7 @@ class TaskDetail(LoginRequiredMixin, DetailView):
     
 class TaskCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Task
-    fields = ['title', 'description', 'is_completed']
+    form_class = TaskForm
     success_url = reverse_lazy('task_list')
     success_message = "Task was created sucessfully!"
 
@@ -72,7 +72,7 @@ class TaskCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     
 class TaskUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Task
-    fields = ['title', 'description', 'is_completed']
+    form_class = TaskForm
     success_url = reverse_lazy('task_list')
     success_message = "Task was updated succesfully "
     
@@ -85,3 +85,10 @@ class TaskDelete(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Task deleted successfully.")
         return reverse_lazy('task_list')
+    
+class TaskToggle(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        task = Task.objects.get(id=pk, user=request.user)
+        task.is_completed = not task.is_completed
+        task.save()
+        return redirect('task_list')

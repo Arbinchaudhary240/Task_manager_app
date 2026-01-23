@@ -23,7 +23,7 @@ class TaskListTest(TestCase):
         self.assertContains(response, 'Test Task')
 
     def test_task_list_redirects_anonymous_user(self):
-        """Check id a logged out user is redirected to login."""
+        """Check if a logged out user is redirected to login."""
         response = self.client.get(reverse('task_list'))
         # 302 is the status code for a redirect
         self.assertEqual(response.status_code, 302)
