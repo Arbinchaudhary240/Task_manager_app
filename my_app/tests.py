@@ -39,3 +39,35 @@ class TaskListTest(TestCase):
 
         self.assertContains(response, 'Test Task')
         self.assertNotContains(response, 'secret Task')
+    
+    def test_task_priority_assignment(self):
+        # cheak if the priority is correctly assigned to the task.
+        task = Task.objects.create(
+            user = self.user,
+            title = 'High priority task',
+            priority = 'H'
+        )
+        self.assertEqual(task.priority, 'H')
+
+    def test_task_list_search(self):
+        # check if the search filter returns the correct results.
+        self.client.login(username='testuser', password='password123')
+
+        Task.objects.create(user=self.user, title='Buy Milk')
+        Task.objects.create(user=self.user, title='Clean room')
+
+        response = self.client.get(reverse('task_list'), {'search-area': 'milk'})
+
+        self.assertContains(response, 'Buy Milk')
+        self.assertNotContains(response, 'Clean room')
+
+    def test_task_toggle_status(self):
+        # check is the task-toggle view flips the is_completed status.
+        self.client.login(username='testuser', password='password123')
+        task = Task.objects.create(user=self.user, title='Togglr-me', is_completed=False)
+        # Hit the task-toggle
+        self.client.get(reverse('task-toggle', kwargs={'pk': task.id}))
+
+        # Refresh from datebase.
+        task.refresh_from_db()
+        self.assertTrue(task.is_completed)

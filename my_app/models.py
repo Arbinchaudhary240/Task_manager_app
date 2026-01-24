@@ -8,7 +8,7 @@ class Task(models.Model):
     description = models.TextField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    image = models.ImageField(upload_to='task_image/', blank=True, null=True)
     PRIORITY_CHOICES = [
         ('L', 'Low'),
         ('M', 'Mediam'),

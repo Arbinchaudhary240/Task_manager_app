@@ -40,22 +40,35 @@
                         <span class="text-decoration-line-through text-muted">
                             <i class="bi bi-check-circle-fill text-success me-2"></i>
                             <a href="{% url 'task_detail' task.id %}">{{ task.title }}</a>
-                            <a href="{% url 'task-toggle' task.id %}">
-                                {% if task.is_completed %} ✅ Done {% else %} ⭕ Mark Complete {% endif %}
-                            </a>
+                            {% if task.image %}
+                                <img src="{{ task.image.url }}" alt="task image" style="width: 50px; height: 50px; object-fit: cover;" class="rounded ms-3">
+                            {% endif %}
                         </span>
                     {% else %}
                         <span class="fw-bold">
                             <i class="bi bi-circle me-2 text-secondary"></i> 
                             <a href="{% url 'task_detail' task.id %}">{{ task.title }}<a/>
-                            <a href="{% url 'task-toggle' task.id %}">
-                                {% if task.is_completed %} ✅ Done {% else %} ⭕ Mark Complete {% endif %}
-                            </a>
+                            {% if task.image %}
+                                <img src="{{ task.image.url }}" alt="task image" style="width: 50px; height: 50px; object-fit: cover;" class="rounded ms-3">
+                            {% else %}
+                                <i class="bi bi-image text-light me-3" style="font-size: 1.5rem;"></i>
+                                {% endif %}
                         </span>
                     {% endif %}
                 </div>
-                
+                <div class="priority">
+                    {% if task.priority == 'H' %}
+                                <span class="badge bg-danger">High</span>
+                            {% elif task.priority == 'M' %}
+                                <span class="badge bg-warning text-dark">Mediam</span>
+                            {% else %}
+                                <span class="badge bg-success">Low</span>
+                            {% endif %}
+                </div>
                 <div class="btn-group">
+                    <a href="{% url 'task-toggle' task.id %}">
+                                {% if task.is_completed %} ✅ Done {% else %} ⭕ Mark Complete {% endif %}
+                            </a>
                     <a href="{% url 'task_update' task.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
                     <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
                 </div>
