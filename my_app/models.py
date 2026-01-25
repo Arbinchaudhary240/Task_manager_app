@@ -9,6 +9,8 @@ class Task(models.Model):
     is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='task_image/', blank=True, null=True)
+    due_date = models.DateTimeField(null=True, blank=True)
+
     PRIORITY_CHOICES = [
         ('L', 'Low'),
         ('M', 'Mediam'),

@@ -11,6 +11,8 @@ from django.views.generic.detail import DetailView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views import View
+from django.utils import timezone
+import datetime
 
 # Create your views here.
 
@@ -67,7 +69,14 @@ class TaskCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     success_message = "Task was created sucessfully!"
 
     def form_valid(self, form):
-        form.instance.user = self.request.user 
+        form.instance.user = self.request.user
+        date = form.cleaned_data.get('due_date')
+        time = form.cleaned_data.get('due_time')
+
+        if date:
+            if not time:
+                time = datetime.time(23, 59)
+            form.instance.due_date = datetime.datetime.combine(date, time)
         return super().form_valid(form)
     
 class TaskUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
