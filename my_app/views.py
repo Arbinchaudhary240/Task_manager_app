@@ -67,6 +67,25 @@ class TaskCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = TaskForm
     success_url = reverse_lazy('task_list')
     success_message = "Task was created sucessfully!"
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        date = form.cleaned_data.get('due_date')
+        time = form.cleaned_data.get('due_time')
+
+        if date:
+            if not time:
+                time = datetime.time(23, 59)
+            combined = datetime.datetime.combine(date, time)
+            form.instance.due_date = timezone.make_aware(combined)
+
+        return super().form_valid(form)
+    
+class TaskUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Task
+    form_class = TaskForm
+    success_url = reverse_lazy('task_list')
+    success_message = "Task was updated succesfully"
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -76,14 +95,10 @@ class TaskCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         if date:
             if not time:
                 time = datetime.time(23, 59)
-            form.instance.due_date = datetime.datetime.combine(date, time)
+            combined = datetime.datetime.combine(date, time)
+            form.instance.due_date = timezone.make_aware(combined)
+
         return super().form_valid(form)
-    
-class TaskUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-    model = Task
-    form_class = TaskForm
-    success_url = reverse_lazy('task_list')
-    success_message = "Task was updated succesfully "
     
 class TaskDelete(LoginRequiredMixin, DeleteView):
     model = Task
