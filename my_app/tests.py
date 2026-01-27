@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 from .models import Task
+from django.utils import timezone
+from datetime import timedelta
 
 # Create your tests here.
 
@@ -71,3 +73,19 @@ class TaskListTest(TestCase):
         # Refresh from datebase.
         task.refresh_from_db()
         self.assertTrue(task.is_completed)
+
+    def test_overdue_task_turn_red_border(self):
+        self.client.login(username='testuser', password='password123')
+
+        task = Task.objects.create(
+            user=self.user,
+            title = 'Overdue task',
+            due_date = timezone.now() - timedelta(seconds=30),
+            is_completed = False
+        )
+
+        responce = self.client.get(reverse('task_list'))
+
+        self.assertEqual(responce.status_code, 200)
+        self.assertContains(responce, "border-danger")
+        self.assertContains(responce, "OVERDUE")

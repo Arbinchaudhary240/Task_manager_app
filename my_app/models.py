@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Create your models here.
 class Task(models.Model):
@@ -24,3 +25,9 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+    
+    @property
+    def is_overdue(self):
+        if self.due_date and not self.is_completed:
+            return timezone.now() > self.due_date
+        return False
