@@ -1,5 +1,5 @@
 {% extends 'my_app/base.html' %}
-
+{% load date_filter %}
 {% block content %}
 
 <!-- HEADER -->
@@ -37,84 +37,89 @@
 
 <!-- TASK LIST -->
 {% for task in tasks %}
-<div class="card mb-3 shadow-sm {% if task.is_overdue %}border-danger{% endif %}">
-    <div class="card-body d-flex justify-content-between align-items-center">
+    <div class="task-card" 
+         data-id="{{ task.id }}" 
+         data-title="{{ task.title }}" 
+         data-deadline="{{ task.due_date|date:'c' }}" 
+         data-completed="{{ task.is_completed|lower }}">
+        <div class="card mb-3 shadow-sm {% if task.is_overdue %}border-danger{% endif %}">
+            <div class="card-body d-flex justify-content-between align-items-center">
 
-        <!-- LEFT -->
-        <div class="d-flex align-items-start">
-            {% if task.is_completed %}
-                <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
-            {% else %}
-                <i class="bi bi-circle text-secondary fs-5 me-2"></i>
-            {% endif %}
-
-            <div>
-                <h6 class="mb-1 {% if task.is_completed %}text-decoration-line-through text-muted{% endif %}">
-                    <a href="{% url 'task_detail' task.id %}" class="text-decoration-none">
-                        {{ task.title }}
-                    </a>
-
-                    {% if task.is_overdue %}
-                        <span class="badge bg-danger ms-2">OVERDUE</span>
+                <!-- LEFT -->
+                <div class="d-flex align-items-start">
+                    {% if task.is_completed %}
+                        <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                    {% else %}
+                        <i class="bi bi-circle text-secondary fs-5 me-2"></i>
                     {% endif %}
-                </h6>
 
-                {% if task.due_date %}
-                    <small class="text-muted">
-                        <i class="bi bi-clock"></i>
-                        Due: {{ task.due_date|date:"M d, h:i A" }}
-                    </small>
-                {% endif %}
+                    <div>
+                        <h6 class="mb-1 {% if task.is_completed %}text-decoration-line-through text-muted{% endif %}">
+                            <a href="{% url 'task_detail' task.id %}" class="text-decoration-none">
+                                {{ task.title }}
+                            </a>
+
+                            {% if task.is_overdue %}
+                                <span class="badge bg-danger ms-2">OVERDUE</span>
+                            {% endif %}
+                        </h6>
+
+                        {% if task.due_date %}
+                            <small class="text-muted">
+                                <i class="bi bi-clock"></i>
+                                Due: {{ task.due_date|smart_date }}
+                            </small>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- RIGHT -->
+                <div class="d-flex align-items-center gap-3">
+
+                    <!-- PRIORITY -->
+                    {% if task.priority == 'H' %}
+                        <span class="badge bg-danger">High</span>
+                    {% elif task.priority == 'M' %}
+                        <span class="badge bg-warning text-dark">Medium</span>
+                    {% else %}
+                        <span class="badge bg-success">Low</span>
+                    {% endif %}
+
+                    <!-- IMAGE -->
+                    {% if task.image %}
+                        <img src="{{ task.image.url }}"
+                            class="rounded"
+                            style="width:50px;height:50px;object-fit:cover;"
+                            alt="task image">
+                    {% endif %}
+
+                    <!-- ACTIONS -->
+                    <div class="btn-group">
+                        <a href="{% url 'task-toggle' task.id %}"
+                        class="btn btn-sm btn-outline-success">
+                            {% if task.is_completed %}Done{% else %}Complete{% endif %}
+                        </a>
+                        <a href="{% url 'task_update' task.id %}"
+                        class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a href="{% url 'task_delete' task.id %}"
+                        class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+
+                </div>
             </div>
         </div>
+        {% empty %}
 
-        <!-- RIGHT -->
-        <div class="d-flex align-items-center gap-3">
-
-            <!-- PRIORITY -->
-            {% if task.priority == 'H' %}
-                <span class="badge bg-danger">High</span>
-            {% elif task.priority == 'M' %}
-                <span class="badge bg-warning text-dark">Medium</span>
-            {% else %}
-                <span class="badge bg-success">Low</span>
-            {% endif %}
-
-            <!-- IMAGE -->
-            {% if task.image %}
-                <img src="{{ task.image.url }}"
-                     class="rounded"
-                     style="width:50px;height:50px;object-fit:cover;"
-                     alt="task image">
-            {% endif %}
-
-            <!-- ACTIONS -->
-            <div class="btn-group">
-                <a href="{% url 'task-toggle' task.id %}"
-                   class="btn btn-sm btn-outline-success">
-                    {% if task.is_completed %}Done{% else %}Complete{% endif %}
-                </a>
-                <a href="{% url 'task_update' task.id %}"
-                   class="btn btn-sm btn-outline-secondary">Edit</a>
-                <a href="{% url 'task_delete' task.id %}"
-                   class="btn btn-sm btn-outline-danger">Delete</a>
-            </div>
-
+        <!-- EMPTY STATE -->
+        <div class="text-center py-5">
+            <i class="bi bi-clipboard-x display-1 text-light"></i>
+            <h4 class="text-muted mt-3">No tasks found</h4>
+            <p class="text-secondary">Your task list is empty. Ready to start?</p>
+            <a href="{% url 'create_task' %}" class="btn btn-primary btn-lg">
+                Create Your First Task
+            </a>
         </div>
     </div>
-</div>
-{% empty %}
-
-<!-- EMPTY STATE -->
-<div class="text-center py-5">
-    <i class="bi bi-clipboard-x display-1 text-light"></i>
-    <h4 class="text-muted mt-3">No tasks found</h4>
-    <p class="text-secondary">Your task list is empty. Ready to start?</p>
-    <a href="{% url 'create_task' %}" class="btn btn-primary btn-lg">
-        Create Your First Task
-    </a>
-</div>
-
 {% endfor %}
 
 <!--Auto fade-->
@@ -129,5 +134,51 @@
             }, 800); 
         }); 
     }, 2000); // 2000 = 2 seconds 
+</script>
+<script>
+    // 1. Request permission to show notifications
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
+
+    function checkDeadlines() {
+        const now = new Date();
+        const tasks = document.querySelectorAll('.task-card');
+
+        tasks.forEach(task => {
+            const title = task.getAttribute('data-title');
+            const deadlineStr = task.getAttribute('data-deadline');
+            const isCompleted = task.getAttribute('data-completed') === 'true';
+
+            if (deadlineStr && !isCompleted) {
+                const deadline = new Date(deadlineStr);
+                const diffInMinutes = (deadline - now) / 1000 / 60;
+
+                // Trigger if task is due in exactly 60 minutes (check every minute)
+                if (diffInMinutes > 59 && diffInMinutes <= 60) {
+                    showNotification(title, "This task is due in 1 hour!");
+                }
+                
+                // Trigger if task is overdue
+                if (diffInMinutes < 0 && diffInMinutes > -1) {
+                    showNotification(title, "This task is OVERDUE!");
+                }
+            }
+        });
+    }
+
+    function showNotification(title, message) {
+        if (Notification.permission === "granted") {
+            new Notification("Task Reminder: " + title, {
+                body: message,
+                icon: "/static/images/bell-icon.png" // Optional
+            });
+        }
+    }
+
+    // Run every 60 seconds
+    setInterval(checkDeadlines, 60000);
+    // Also run once immediately on load
+    checkDeadlines();
 </script>
 {% endblock %}

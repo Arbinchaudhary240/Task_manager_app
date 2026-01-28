@@ -13,6 +13,8 @@ from django.contrib import messages
 from django.views import View
 from django.utils import timezone
 import datetime
+from datetime import timedelta
+
 
 # Create your views here.
 
@@ -97,8 +99,9 @@ class TaskUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
                 time = datetime.time(23, 59)
             combined = datetime.datetime.combine(date, time)
             form.instance.due_date = timezone.make_aware(combined)
-
+            
         return super().form_valid(form)
+    
     
 class TaskDelete(LoginRequiredMixin, DeleteView):
     model = Task

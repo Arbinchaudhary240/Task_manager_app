@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import Task
 from django.utils import timezone
 from datetime import timedelta
+import datetime
 
 # Create your tests here.
 
@@ -84,8 +85,26 @@ class TaskListTest(TestCase):
             is_completed = False
         )
 
-        responce = self.client.get(reverse('task_list'))
+        response = self.client.get(reverse('task_list'))
 
-        self.assertEqual(responce.status_code, 200)
-        self.assertContains(responce, "border-danger")
-        self.assertContains(responce, "OVERDUE")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "border-danger")
+        self.assertContains(response, "OVERDUE")
+
+    def test_previously_saved_duedate(self):
+        self.client.login(username='testuser', password='password123')
+
+        test_time = datetime.time(10,0)
+        test_date = datetime.date(2026, 1, 31)
+        combined_dt = timezone.make_aware(datetime.datetime.combine(test_date, test_time))
+
+        task = Task.objects.create(
+            user=self.user,
+            title='testtask',
+            due_date=combined_dt
+            )
+
+        response = self.client.get(reverse('task_update', kwargs={'pk': task.pk}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response,'value="10:00"')

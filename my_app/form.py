@@ -1,5 +1,6 @@
 from django import forms
 from .models import Task
+from django.utils import timezone
 
 class TaskForm(forms.ModelForm):
     due_date = forms.DateField(
@@ -22,5 +23,7 @@ class TaskForm(forms.ModelForm):
         super(TaskForm, self).__init__(*args, **kwargs)
 
         if self.instance and self.instance.due_date:
-            self.fields['due_date'].initial = self.instance.due_date.date()
-            self.fields['due_time'].initial = self.instance.due_date.time()
+            local_dt = timezone.localtime(self.instance.due_date)
+
+            self.fields['due_date'].initial = local_dt.date()
+            self.fields['due_time'].initial = local_dt.strftime('%H:%M')
