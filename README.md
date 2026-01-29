@@ -1,5 +1,5 @@
 # Django Task Manager
-A professional-grade Task Manager built with Django, focusing on Object-Oriented Programming (OOP) and secure Class-Based Views.
+A robust, timezone-aware Task Management application built with Django. This isn't just a simple "To-Do" list; it handles the complex parts of web development, like localized time offsets and custom template logic.
 
 ## 🚀 Features
 - **User Authentication:** Secure registration, login, and logout.
@@ -7,7 +7,22 @@ A professional-grade Task Manager built with Django, focusing on Object-Oriented
 - **Search Functionality:** Real-time task filtering.
 - **Security:** Logic-level isolation (Users can only see their own tasks).
 - **Class-Based Views:** Built using Django's generic views for scalability.
+- **Smart timezone Awarness:** 
+Tasks are stored in UTC but automatically converted to the user's local time.
+- **Human friendly Date filters:**
+Instead of showing boring dates like 2026-01-28, the app uses a custom template tag (smart_date) to display:
+-Today
+-Tomorrow
+-Yesterday
+- **Integrated Overdue Logic:**
+The system automatically identifies tasks that have passed their due date and marks them with a visual "Overdue" badge.
+- **Robust Testing Suite:**
+Includes automated Unit Tests to ensure:
+-Tasks are saved with the correct time.
+-The "Update" form pre-fills data accurately.
+-The smart_date filter renders correctly in the browser.
 
+🛠️ Technical Stack
 ## 🛠️ Technical Stack
 - **Backend:** Django 6.0.1
 - **Database:** SQLite (Development)
