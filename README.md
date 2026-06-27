@@ -1,50 +1,102 @@
-# Django Task Manager
-A robust, timezone-aware Task Management application built with Django. This isn't just a simple "To-Do" list; it handles the complex parts of web development, like localized time offsets and custom template logic.
+## Task Manager App
+A clean, robust, and intuitive web application built with Python and Django to streamline daily task workflows. This application allows users to create, categorize, track, and manage their tasks efficiently with secure user authentication and an interactive dashboard.
 
-## 🚀 Features
-- **User Authentication:** Secure registration, login, and logout.
-- **Task CRUD:** Create, View, Update, and Delete tasks.
-- **Search Functionality:** Real-time task filtering.
-- **Security:** Logic-level isolation (Users can only see their own tasks).
-- **Class-Based Views:** Built using Django's generic views for scalability.
-- **Smart timezone Awarness:** 
-Tasks are stored in UTC but automatically converted to the user's local time.
-- **Human friendly Date filters:**
-Instead of showing boring dates like 2026-01-28, the app uses a custom template tag (smart_date) to display:
--Today
--Tomorrow
--Yesterday
-- **Integrated Overdue Logic:**
-The system automatically identifies tasks that have passed their due date and marks them with a visual "Overdue" badge.
-- **Robust Testing Suite:**
-Includes automated Unit Tests to ensure:
--Tasks are saved with the correct time.
--The "Update" form pre-fills data accurately.
--The smart_date filter renders correctly in the browser.
+## Key Features
+User Authentication & Security: Secure user signup, login, and logout functionalities to ensure data privacy.
 
-🛠️ Technical Stack
-## 🛠️ Technical Stack
-- **Backend:** Django 6.0.1
-- **Database:** SQLite (Development)
-- **Architecture:** Class-Based Views (CBVs) with Mixins for security.
-- **Testing:** Automated unit tests for core logic.
-## ⚙️ Installation & Setup
+Task CRUD Operations: Complete control to Create, Read, Update, and Delete tasks.
 
-## 🚦 Getting Started
-1. Clone the repo: `git clone <your-repo-link>`
-2. Create venv: `python -m venv .venv`
-3. Install Django: `pip install django`
-4. Run Migrations: `python manage.py migrate`
-5. Start Server: `python manage.py runserver`
-6. open http://127.0.0.1:8000/ in your browser.
+Task Categorization: Group tasks by status (e.g., Pending, In Progress, Completed) and set priorities (High, Medium, Low).
 
-## 🧪 Testing
-Run the automated test suite:
-```bash
-python manage.py test
+Responsive Dashboard: A clean user interface optimized for both desktop and mobile views.
 
-# 📂 Project Structure:
-- core/: Project configuration and settings.
-- my_app/: Main application logic (Models,     Views, Templates).
-- templates/: HTML files with Bootstrap integration.
-- requirements.txt: List of all Python dependencies.
+Due Date Tracking: Stay on top of deadlines with visual reminders for upcoming and overdue items.
+
+## Tech Stack
+Backend Framework: Python  & Django ⚙️
+
+Database: SQLite (Default / Development)
+
+Frontend: HTML5, CSS3, Bootstrap (or Tailwind)
+
+## Getting Started & Installation
+Follow these steps to set up the project locally on your machine.
+
+Prerequisites
+Make sure you have Python installed (v3.10 or higher recommended). You can verify by running:
+
+Bash
+python --version
+Setup Steps
+
+1. Clone the Repository
+
+Bash
+git clone https://github.com/Arbinchaudhary240/Task_manager_app.git
+cd Task_manager_app
+
+2. Create and Activate a Virtual Environment
+
+On Windows:  
+
+Bash
+python -m venv venv
+venv\Scripts\activate
+
+On macOS/Linux:  
+
+Bash
+python3 -m venv venv
+source venv/bin/activate
+
+3. Install Dependencies  
+
+Bash
+pip install -r requirements.txt
+
+4. Run Database Migrations  
+
+Bash
+python manage.py makemigrations
+python manage.py migrate
+
+5. Create a Superuser (Optional - for Admin Panel Access)
+
+Bash
+python manage.py createsuperuser
+
+6. Start the Development Server
+
+Bash
+python manage.py runserver
+
+Open your browser and navigate to http://127.0.0.1:8000/ to explore the app!
+
+📂 Project Structure
+
+Task_manager_app/
+│
+├── core/                  # Main project configuration folder (settings, urls, etc.)
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
+├── tasks/                 # Primary application logic app
+│   ├── migrations/
+│   ├── templates/         # HTML files for UI rendering
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── models.py          # Database schemas (User, Task structures)
+│   ├── urls.py            # Route mappings for tasks
+│   └── views.py           # Request-response controllers
+│
+├── manage.py              # Django administrative command script
+├── requirements.txt       # Dependencies list
+└── README.md              # Project documentation
+
+🔒 Security & Best Practices
+
+Environment Variables: Never commit the SECRET_KEY or sensitive database credentials directly to GitHub. Use a .env file with django-environ or python-dotenv.
+
+Database Seeding: Ensure DEBUG = True is only used during development and turned off (False) in production environments.
